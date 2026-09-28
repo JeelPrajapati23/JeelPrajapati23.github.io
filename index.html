@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Jeel Prajapati · Software Engineer</title>
+<meta name="description" content="Jeel Prajapati builds backend systems around LLMs and measures whether they are right: PR Review Agent, ClauseIQ and reachfix.">
+<meta property="og:title" content="Jeel Prajapati · Software Engineer">
+<meta property="og:description" content="Jeel Prajapati builds backend systems around LLMs and measures whether they are right: PR Review Agent, ClauseIQ and reachfix.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="wrap">
+  <nav aria-label="Primary">
+    <a class="mark" href="index.html">jeel.</a>
+    <ul>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#approach">Approach</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero" id="top">
+    <div>
+      <div class="role">Software engineer · backend &amp; applied AI</div>
+      <h1>Jeel<br>Prajapati</h1>
+      <p class="lede">I build backend systems around LLMs: code review agents, legal search, supply-chain security. Then I <span class="hl">measure whether they're right</span> before anyone relies on them.</p>
+      <div class="actions">
+        <a class="btn solid" href="#projects">See projects ↓</a>
+        <a class="btn" href="https://github.com/JeelPrajapati23">GitHub ↗</a>
+      </div>
+    </div>
+
+    <div class="term" aria-label="Project results in a terminal">
+      <div class="term-top">
+        <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" id="t-pr" aria-selected="true" data-k="pr">pr-review-agent</button>
+          <button class="tab" role="tab" id="t-cq" aria-selected="false" data-k="cq">clauseiq</button>
+          <button class="tab" role="tab" id="t-rf" aria-selected="false" data-k="rf">reachfix</button>
+        </div>
+      </div>
+      <div class="screen" id="screen" role="tabpanel" aria-live="polite"></div>
+      <div class="term-foot">Commands from each repo · results as reported in its README</div>
+    </div>
+  </header>
+
+  <section id="projects" aria-labelledby="projects-h">
+    <div class="sec-title">
+      <h2 id="projects-h">Selected<br>projects</h2>
+      <p>Three systems, each deployed or runnable, each with an evaluation you can rerun from the repo.</p>
+    </div>
+
+    <article class="project">
+      <div class="info">
+        <div class="kicker">LLM agents · GitHub App</div>
+        <h3>PR Review Agent</h3>
+        <p class="pitch">Two AI reviewers read every pull request and post fixes you can apply with one click.</p>
+        <ul class="facts">
+          <li>A <b>security</b> agent and a <b>performance &amp; logic</b> agent review the diff separately, then a third merges their findings.</li>
+          <li><b>Fail-closed:</b> if the review cites a file the agents never opened, it isn't posted.</li>
+          <li>Runs the PR's own tests in a sandbox with every secret stripped out, and resumes cleanly after a crash.</li>
+        </ul>
+        <div class="stack"><span>FastAPI</span><span>Celery</span><span>Redis</span><span>LangGraph</span><span>MCP</span><span>gpt-oss-120b</span></div>
+        <div class="plinks"><a class="btn solid" href="https://github.com/JeelPrajapati23/PR-Review-Agent">Source ↗</a><a class="more" href="projects/pr-review-agent.html">Full case study →</a></div>
+      </div>
+      <div class="figure">
+        <div>
+          <div class="fig-label">What happens on each push</div>
+          <ol class="flow">
+            <li><span class="step" style="--i:0">webhook</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:1">dedupe</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:2">budget check</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:3">security</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:4">perf &amp; logic</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:5">synthesize</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:6">grounded?</span></li>
+          </ol>
+          <div class="outcomes"><span class="out go">yes → post review</span><span class="out stop">no → failure status</span></div>
+        </div>
+        <div>
+          <div class="fig-label">Recall on 15 injected bugs</div>
+          <div class="bars">
+            <div class="bar-row"><b>5/5</b><div class="track"><div class="fill" style="width:100%"></div></div><small>security bugs, such as SQL injection</small></div>
+            <div class="bar-row"><b>5/5</b><div class="track"><div class="fill" style="width:100%"></div></div><small>performance and logic bugs, such as races</small></div>
+            <div class="bar-row"><b>4/5</b><div class="track"><div class="fill" style="width:80%"></div></div><small>structural bugs. Zero false positives overall</small></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="project flip">
+      <div class="info">
+        <div class="kicker">Retrieval-augmented generation · Legal</div>
+        <h3>ClauseIQ</h3>
+        <p class="pitch">Ask questions about your contracts, or compare several at once, and every answer is fact-checked against the source.</p>
+        <ul class="facts">
+          <li><b>Hybrid search</b> combines vectors and keywords, reranks with Cohere, then expands each hit to its full clause.</li>
+          <li>Each answer is split into claims, and each claim must be backed by a quote to pass.</li>
+          <li>Accounts with isolated workspaces, an audit log and admin panel, deployed with CI/CD.</li>
+        </ul>
+        <div class="stack"><span>FastAPI</span><span>Qdrant</span><span>Cohere</span><span>Postgres</span><span>React</span><span>Ragas</span></div>
+        <div class="plinks"><a class="btn solid" href="https://clauseiq-rag.vercel.app">Live app ↗</a><a class="btn" href="https://github.com/JeelPrajapati23/ClauseIQ">Source ↗</a><a class="more" href="projects/clauseiq.html">Full case study →</a></div>
+      </div>
+      <div class="figure">
+        <div>
+          <div class="fig-label">What happens to a question</div>
+          <ol class="flow">
+            <li><span class="step" style="--i:0">classify</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:1">rewrite follow-up</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:2">vector + BM25</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:3">rerank</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:4">full clause</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:5">stream answer</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:6">check claims</span></li>
+          </ol>
+          <div class="outcomes"><span class="out go">PASS</span><span class="out mid">PARTIAL</span><span class="out stop">FAIL</span></div>
+        </div>
+        <div>
+          <div class="fig-label">68 questions from CUAD contracts</div>
+          <div class="bars">
+            <div class="bar-row"><b>0.89</b><div class="track"><div class="fill" style="width:89%"></div><div class="base" style="left:68%"></div></div><small>faithfulness, up from <em>0.68</em> with the previous model</small></div>
+            <div class="bar-row"><b>0.83</b><div class="track"><div class="fill" style="width:83%"></div><div class="base" style="left:69%"></div></div><small>context recall, up from <em>0.69</em></small></div>
+            <div class="bar-row"><b>6/6</b><div class="track"><div class="fill" style="width:100%"></div></div><small>out-of-scope questions refused</small></div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <article class="project">
+      <div class="info">
+        <div class="kicker">Supply-chain security · Knowledge graph</div>
+        <h3>reachfix</h3>
+        <p class="pitch">Finds which of your projects a vulnerability reaches, through which dependencies, and the smallest upgrade that fixes it.</p>
+        <ul class="facts">
+          <li>A <b>dependency graph</b> built from npm lockfiles and OSV data, plus semantic search over advisory text.</li>
+          <li>Suggested fixes respect the version ranges every other package already declares.</li>
+          <li>Scan your own <span class="mono">package-lock.json</span> in the browser, or use it from Claude Code as an MCP server.</li>
+        </ul>
+        <div class="stack"><span>Python</span><span>NetworkX</span><span>OSV</span><span>MiniLM</span><span>MCP</span><span>uv</span></div>
+        <div class="plinks"><a class="btn solid" href="https://reachfix-latest.onrender.com">Live demo ↗</a><a class="btn" href="https://github.com/JeelPrajapati23/reachfix">Source ↗</a><a class="more" href="projects/reachfix.html">Full case study →</a></div>
+      </div>
+      <div class="figure">
+        <div>
+          <div class="fig-label">What happens to a question</div>
+          <ol class="flow">
+            <li><span class="step" style="--i:0">route question</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:1">walk the graph</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:2">search advisories</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:3">plan the fix</span><span class="arrow">→</span></li>
+            <li><span class="step" style="--i:4">answer with citations</span></li>
+          </ol>
+          <div class="outcomes"><span class="out go">[G#] graph facts</span><span class="out go">[A#] advisory text</span></div>
+        </div>
+        <div>
+          <div class="fig-label">Checks derived from the graph and OSV</div>
+          <div class="bars">
+            <div class="bar-row"><b>556</b><div class="track"><div class="fill" style="width:100%"></div></div><small>of 556 version matches agree with OSV</small></div>
+            <div class="bar-row"><b>20/20</b><div class="track"><div class="fill" style="width:100%"></div></div><small>lockfile scans identical to the graph</small></div>
+            <div class="bar-row"><b>23/24</b><div class="track"><div class="fill" style="width:95.8%"></div></div><small>answers fully grounded in their evidence</small></div>
+          </div>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section id="approach" aria-labelledby="approach-h">
+    <div class="sec-title">
+      <h2 id="approach-h">How I<br>build</h2>
+      <p>The same three habits run through every project above.</p>
+    </div>
+    <div class="principles">
+      <div class="principle">
+        <h3>Test it like it's <span class="hl">production</span></h3>
+        <p>Each evaluation runs the real pipeline, and a different model does the grading, so nothing grades its own work.</p>
+      </div>
+      <div class="principle">
+        <h3>Refuse when <span class="hl">unsure</span></h3>
+        <p>No relevant context means a refusal with zero LLM calls. An ungrounded review becomes a failure status, not a guess.</p>
+      </div>
+      <div class="principle">
+        <h3>Build for the <span class="hl">free tier</span></h3>
+        <p>Token budgets, rate limits and cold starts shaped these systems as much as the features did.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-h" style="border-top:0">
+    <div class="contact">
+      <h2 id="contact-h">Hiring for backend or applied AI?</h2>
+      <p>I'm looking for software engineering roles. Email is the fastest way to reach me.</p>
+      <div class="mailrow">
+        <span class="mail" id="email">jeelprajapati2006@gmail.com</span>
+        <button class="copy" id="copy-email" type="button">Copy</button>
+      </div>
+      <a href="https://github.com/JeelPrajapati23">github.com/JeelPrajapati23 ↗</a>
+    </div>
+  </section>
+
+  <footer><span>© 2026 Jeel Prajapati</span><a href="https://github.com/JeelPrajapati23">GitHub</a></footer>
+</div>
+
+<script src="assets/main.js"></script>
+</body>
+</html>

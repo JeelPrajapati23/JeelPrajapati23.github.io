@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ClauseIQ · Jeel Prajapati</title>
+<meta name="description" content="Multi-tenant RAG for legal contracts with claim-level answer verification. 0.89 faithfulness on 68 CUAD questions.">
+<meta property="og:title" content="ClauseIQ · Jeel Prajapati">
+<meta property="og:description" content="Multi-tenant RAG for legal contracts with claim-level answer verification. 0.89 faithfulness on 68 CUAD questions.">
+<meta property="og:type" content="website">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="wrap">
+  <nav aria-label="Primary">
+    <a class="mark" href="../index.html">jeel.</a>
+    <ul>
+      <li><a href="../index.html#projects" aria-current="page">Projects</a></li>
+      <li><a href="../index.html#approach">Approach</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="crumbs"><a href="../index.html#projects">Projects</a> / ClauseIQ</div>
+  <header class="p-hero">
+    <div class="kicker">Retrieval-augmented generation · Legal</div>
+    <h1>ClauseIQ</h1>
+    <p class="pitch">Ask questions about your contracts, or compare several at once, and every answer is fact-checked against the source.</p>
+    <div class="row"><a class="btn solid" href="https://clauseiq-rag.vercel.app">Live app ↗</a><a class="btn" href="https://github.com/JeelPrajapati23/ClauseIQ">Source ↗</a></div>
+    <div class="stack" style="margin-top:0"><span>Python</span><span>FastAPI</span><span>Qdrant</span><span>BM25</span><span>Cohere Rerank</span><span>Gemini 2.5 Flash</span><span>Postgres</span><span>React</span><span>Vite</span><span>Ragas</span><span>Docker</span></div>
+    <div class="stats3"><div><b>0.89</b><span>faithfulness on 68 questions from real CUAD contracts</span></div><div><b>0.83</b><span>context recall, up from 0.69 with the previous model</span></div><div><b>6/6</b><span>out-of-scope questions refused with zero LLM calls</span></div></div>
+  </header>
+
+  <section class="split" aria-labelledby="why-h">
+    <h2 id="why-h">The problem</h2>
+    <div class="prose"><p>Contracts are long and precise, and a confident wrong answer about a clause is worse than no answer. Most RAG demos stop at "the answer sounds right".</p><p>ClauseIQ is built so that every answer is grounded in the user's own documents, checked claim by claim before it's trusted, and kept private to the account that uploaded them.</p></div>
+  </section>
+
+  <section class="split" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps"><li><div><b>Classify the question</b><p>Keyword rules label it <code>FACT</code> or <code>ANALYTICAL</code>, which picks the retrieval width and system prompt without an extra LLM call.</p></div></li><li><div><b>Rewrite follow-ups</b><p>Questions like "what about that clause?" are rewritten into standalone queries using the conversation, only when needed.</p></div></li><li><div><b>Hybrid retrieve</b><p>Qdrant vector search and BM25 are fused with Reciprocal Rank Fusion, filtered to the user's own documents.</p></div></li><li><div><b>Rerank and expand</b><p>Cohere reranks the hits, then each small child chunk is swapped for its full parent clause.</p></div></li><li><div><b>Refuse if empty</b><p>If nothing relevant came back, a canned refusal streams with zero LLM calls.</p></div></li><li><div><b>Stream the answer</b><p>Gemini 2.5 Flash streams the answer token by token over Server-Sent Events, with sources alongside.</p></div></li><li><div><b>Verify claims</b><p>A second pass extracts each factual claim and checks it against the retrieved text for a supporting quote, giving PASS, PARTIAL or FAIL and a 0 to 1 score.</p></div></li></ol>
+  </section>
+
+  <section aria-labelledby="dec-h">
+    <div class="sec-title"><h2 id="dec-h">Design<br>decisions</h2><p>The choices that shaped the system, and why.</p></div>
+    <div class="decisions"><div class="decision"><span class="why">Retrieval</span><h3>Parent-child chunking</h3><p>Small 350-character chunks give precise search hits. The model then sees the 2,000-character parent section, so it reads whole clauses instead of fragments.</p></div><div class="decision"><span class="why">Trust</span><h3>Claims extracted blind</h3><p>The claim extractor doesn't see the retrieved context, so it can't be biased toward claims that happen to be supported.</p></div><div class="decision"><span class="why">Security</span><h3>Same-origin cookie auth</h3><p>The frontend proxies <code>/api/*</code> to the backend, so the auth cookie can be <code>SameSite=Lax</code>. That survives Brave, Safari and Firefox tracking protection without moving tokens into headers.</p></div><div class="decision"><span class="why">Multi-tenancy</span><h3>Isolation at the vector layer</h3><p>Every Qdrant query, write and delete is filtered by <code>user_id</code>, and chat history lives in Postgres, so data follows the account across devices and never crosses tenants.</p></div></div>
+  </section>
+
+  <section class="split" aria-labelledby="res-h">
+    <h2 id="res-h">Results</h2>
+    <div>
+      <div class="table-wrap"><table class="res"><thead><tr><th>Metric</th><th>Gemini 2.5 Flash</th><th>Previous (gpt-oss-20b)</th></tr></thead><tbody><tr><td>Faithfulness</td><td class="n">0.89</td><td class="n">0.68</td></tr><tr><td>Answer relevancy</td><td class="n">0.69</td><td class="n">0.69</td></tr><tr><td>Context precision</td><td class="n">0.66</td><td class="n">0.59</td></tr><tr><td>Context recall</td><td class="n">0.83</td><td class="n">0.69</td></tr></tbody></table></div>
+      <p class="fine">68 questions derived from CUAD commercial contracts, run through the real production pipeline and scored offline with Ragas. A separate Groq-hosted judge does the grading, so no model grades its own answers. By type: factual 0.85 (44), analytical 0.97 (18), out-of-scope 1.00 (6).</p>
+    </div>
+  </section>
+
+  <section class="split" aria-labelledby="extra-h">
+    <h2 id="extra-h">Production</h2>
+    <div class="prose"><p>The live app runs across four managed services: Vercel for the frontend, Render for the API, Neon for Postgres and Qdrant Cloud for vectors, all redeploying on every push to <code>main</code>. Security includes httponly JWT cookies, per-IP rate limiting plus per-account lockout, CSP and HSTS headers, filename sanitizing against path traversal, and an audit log of every account and data action.</p></div>
+  </section>
+
+  <section aria-label="More projects">
+    <div class="pager">
+      <a href="pr-review-agent.html"><span>← Previous project</span><b>PR Review Agent</b></a>
+      <a class="next" href="reachfix.html"><span>Next project →</span><b>reachfix</b></a>
+    </div>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-h" style="border-top:0">
+    <div class="contact">
+      <h2 id="contact-h">Hiring for backend or applied AI?</h2>
+      <p>I'm looking for software engineering roles. Email is the fastest way to reach me.</p>
+      <div class="mailrow">
+        <span class="mail" id="email">jeelprajapati2006@gmail.com</span>
+        <button class="copy" id="copy-email" type="button">Copy</button>
+      </div>
+      <a href="https://github.com/JeelPrajapati23">github.com/JeelPrajapati23 ↗</a>
+    </div>
+  </section>
+
+  <footer><span>© 2026 Jeel Prajapati</span><a href="https://github.com/JeelPrajapati23">GitHub</a></footer>
+</div>
+<script src="../assets/main.js"></script>
+</body>
+</html>

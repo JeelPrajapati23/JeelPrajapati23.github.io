@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>reachfix · Jeel Prajapati</title>
+<meta name="description" content="A dependency and vulnerability knowledge graph that finds how a CVE reaches your project and the smallest upgrade that fixes it.">
+<meta property="og:title" content="reachfix · Jeel Prajapati">
+<meta property="og:description" content="A dependency and vulnerability knowledge graph that finds how a CVE reaches your project and the smallest upgrade that fixes it.">
+<meta property="og:type" content="website">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="wrap">
+  <nav aria-label="Primary">
+    <a class="mark" href="../index.html">jeel.</a>
+    <ul>
+      <li><a href="../index.html#projects" aria-current="page">Projects</a></li>
+      <li><a href="../index.html#approach">Approach</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="crumbs"><a href="../index.html#projects">Projects</a> / reachfix</div>
+  <header class="p-hero">
+    <div class="kicker">Supply-chain security · Knowledge graph</div>
+    <h1>reachfix</h1>
+    <p class="pitch">Finds which of your projects a vulnerability reaches, through which dependencies, and the smallest upgrade that fixes it.</p>
+    <div class="row"><a class="btn solid" href="https://reachfix-latest.onrender.com">Live demo ↗</a><a class="btn" href="https://github.com/JeelPrajapati23/reachfix">Source ↗</a></div>
+    <div class="stack" style="margin-top:0"><span>Python</span><span>NetworkX</span><span>OSV.dev</span><span>npm registry</span><span>MiniLM embeddings</span><span>Groq gpt-oss-120b</span><span>MCP</span><span>uv</span><span>Docker</span></div>
+    <div class="stats3"><div><b>556/556</b><span>version matches agree with OSV's own matching</span></div><div><b>20/20</b><span>uploaded lockfile scans identical to the graph</span></div><div><b>24/24</b><span>answers cite the graph facts and advisories they use</span></div></div>
+  </header>
+
+  <section class="split" aria-labelledby="why-h">
+    <h2 id="why-h">The problem</h2>
+    <div class="prose"><p>"Is my project affected by this CVE?" sounds like a search question, but it isn't. The vulnerable package is usually several hops down the dependency tree, and the obvious fix often breaks a version range some other package declares.</p><p>Similarity search over advisory text can't follow those chains. reachfix combines a dependency graph with semantic search, and keeps the LLM on two narrow, checkable jobs.</p></div>
+  </section>
+
+  <section class="split" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps"><li><div><b>Resolve pinned trees</b><p>Each project is resolved with <code>npm install --before=&lt;date&gt;</code>, so the tree matches what a real project would have installed at the time.</p></div></li><li><div><b>Rebuild real edges</b><p>Lockfile nesting isn't dependency depth because npm hoists packages. Edges are rebuilt with Node's own resolution rule.</p></div></li><li><div><b>Match vulnerabilities</b><p>OSV advisories are matched with reachfix's own semver logic, which agrees with OSV's matching 556 out of 556 times.</p></div></li><li><div><b>Read the advisories</b><p>An LLM extracts exploitability conditions from advisory text, and windowed MiniLM embeddings make that text searchable.</p></div></li><li><div><b>Route the question</b><p>A router sends each question to semantic search, a relational graph query, or graph-guided hybrid retrieval.</p></div></li><li><div><b>Plan the fix</b><p>For each vulnerable copy, find the lowest fixed version every dependent accepts. If one blocks it, upgrade the blocker, repeating up to the project.</p></div></li><li><div><b>Answer with citations</b><p>Answers cite <code>[G#]</code> graph facts and <code>[A#]</code> advisory text, and are checked for any version or advisory ID that isn't in the evidence.</p></div></li></ol>
+  </section>
+
+  <section aria-labelledby="dec-h">
+    <div class="sec-title"><h2 id="dec-h">Design<br>decisions</h2><p>The choices that shaped the system, and why.</p></div>
+    <div class="decisions"><div class="decision"><span class="why">Data</span><h3>Date-pinned dependency trees</h3><p>A tree resolved today pulls the latest patches, so most historical vulnerabilities vanish. Pinning each install to its release date gives realistic, reproducible trees.</p></div><div class="decision"><span class="why">Correctness</span><h3>“Fixed” means really fixed</h3><p>For CVE-2024-45296, the planner picks express 4.22.0 over 4.20.0, because 4.20.0 still allows a path-to-regexp version hit by a follow-up advisory.</p></div><div class="decision"><span class="why">Trust</span><h3>Deterministic first, LLM second</h3><p>Edges come from lockfiles and version ranges come from OSV. The LLM only extracts conditions and writes cited answers, both of which can be checked.</p></div><div class="decision"><span class="why">Usability</span><h3>An npm override as a fallback</h3><p>When no clean upgrade exists, the plan still gives an npm <code>overrides</code> entry, clearly flagged as forcing a version outside a declared range.</p></div></div>
+  </section>
+
+  <section class="split" aria-labelledby="res-h">
+    <h2 id="res-h">Results</h2>
+    <div>
+      <div class="table-wrap"><table class="res"><thead><tr><th>Check</th><th>Result</th></tr></thead><tbody><tr><td>Semver matching vs OSV's own matching</td><td class="n">556/556 agree</td></tr><tr><td>Uploaded lockfile scans vs the graph (20 projects)</td><td class="n">20/20 identical</td></tr><tr><td>Router: route / relational pattern (24 questions)</td><td class="n">23/24 · 22/24</td></tr><tr><td>Answers citing evidence / fully grounded</td><td class="n">24/24 · 23/24</td></tr><tr><td>Answers mentioning every expected fact</td><td class="n">24/24</td></tr><tr><td>Advisory search precision@5 (package / vuln class)</td><td class="n">0.735 · 0.775</td></tr></tbody></table></div>
+      <p class="fine">Every check is derived from the graph or from OSV, not hand-labelled. The corpus is 20 date-pinned npm projects: 2,466 package versions and 296 OSV advisories. The question set is small, so the router prompt is never tuned against it.</p>
+    </div>
+  </section>
+
+  <section class="split" aria-labelledby="extra-h">
+    <h2 id="extra-h">Example</h2>
+    <div class="prose"><pre class="example"><span class="p">$</span> uv run python scripts/ask_depgraph.py "How do I fix CVE-2024-45296 in express@4.17.1?"
+
+my-api
+└─ express@4.17.1
+   └─ path-to-regexp@0.1.7   <span class="r">CVE-2024-45296</span>
+
+fix: upgrade express to <span class="g">4.22.0</span>, or add an npm override</pre>
+<p>You can try this in the hosted demo, scan your own <code>package-lock.json</code>, or connect it to Claude Code as an MCP server with tools like <code>project_exposure</code>, <code>dependency_path</code> and <code>plan_fix</code>.</p></div>
+  </section>
+
+  <section aria-label="More projects">
+    <div class="pager">
+      <a href="clauseiq.html"><span>← Previous project</span><b>ClauseIQ</b></a>
+      <a class="next" href="pr-review-agent.html"><span>Next project →</span><b>PR Review Agent</b></a>
+    </div>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-h" style="border-top:0">
+    <div class="contact">
+      <h2 id="contact-h">Hiring for backend or applied AI?</h2>
+      <p>I'm looking for software engineering roles. Email is the fastest way to reach me.</p>
+      <div class="mailrow">
+        <span class="mail" id="email">jeelprajapati2006@gmail.com</span>
+        <button class="copy" id="copy-email" type="button">Copy</button>
+      </div>
+      <a href="https://github.com/JeelPrajapati23">github.com/JeelPrajapati23 ↗</a>
+    </div>
+  </section>
+
+  <footer><span>© 2026 Jeel Prajapati</span><a href="https://github.com/JeelPrajapati23">GitHub</a></footer>
+</div>
+<script src="../assets/main.js"></script>
+</body>
+</html>

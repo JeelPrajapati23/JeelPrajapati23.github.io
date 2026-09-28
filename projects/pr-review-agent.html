@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PR Review Agent · Jeel Prajapati</title>
+<meta name="description" content="A multi-agent GitHub App that reviews pull requests and posts one-click fixes. 14 of 15 injected bugs caught with zero false positives.">
+<meta property="og:title" content="PR Review Agent · Jeel Prajapati">
+<meta property="og:description" content="A multi-agent GitHub App that reviews pull requests and posts one-click fixes. 14 of 15 injected bugs caught with zero false positives.">
+<meta property="og:type" content="website">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../assets/styles.css">
+</head>
+<body>
+<div class="wrap">
+  <nav aria-label="Primary">
+    <a class="mark" href="../index.html">jeel.</a>
+    <ul>
+      <li><a href="../index.html#projects" aria-current="page">Projects</a></li>
+      <li><a href="../index.html#approach">Approach</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="crumbs"><a href="../index.html#projects">Projects</a> / PR Review Agent</div>
+  <header class="p-hero">
+    <div class="kicker">LLM agents · GitHub App</div>
+    <h1>PR Review Agent</h1>
+    <p class="pitch">Two AI reviewers read every pull request and post fixes you can apply with one click.</p>
+    <div class="row"><a class="btn solid" href="https://github.com/JeelPrajapati23/PR-Review-Agent">Source ↗</a></div>
+    <div class="stack" style="margin-top:0"><span>Python</span><span>FastAPI</span><span>Celery</span><span>Redis</span><span>LangGraph</span><span>MCP</span><span>Groq gpt-oss-120b</span><span>Docker</span><span>Caddy</span></div>
+    <div class="stats3"><div><b>14/15</b><span>injected bugs caught across security, performance and structure</span></div><div><b>0</b><span>false positives across all 15 test cases</span></div><div><b>0.946</b><span>F2 score, weighting recall 4× over precision</span></div></div>
+  </header>
+
+  <section class="split" aria-labelledby="why-h">
+    <h2 id="why-h">The problem</h2>
+    <div class="prose"><p>A single generic prompt makes a poor code reviewer. It either misses real bugs or buries them in vague advice. I wanted reviews that are specific and actionable, and cheap enough to run on Groq's free tier.</p><p>There's a harder problem underneath. A reviewer that can verify its claims has to run the PR's tests, which means executing code written by whoever opened the PR. So the system is built around two real risks: running out of API budget, and running untrusted code.</p></div>
+  </section>
+
+  <section class="split" aria-labelledby="how-h">
+    <h2 id="how-h">How it works</h2>
+    <ol class="steps"><li><div><b>Receive the webhook</b><p>GitHub sends a <code>pull_request</code> event. The body is HMAC-SHA256 verified, and only <code>opened</code> and <code>synchronize</code> actions continue.</p></div></li><li><div><b>Deduplicate</b><p>A Redis lock (<code>SET NX EX 900</code>) turns GitHub's redeliveries of the same commit into no-ops instead of second reviews.</p></div></li><li><div><b>Queue and return</b><p>The job goes to Celery and the webhook returns <code>202</code> immediately. Nothing waits on the analysis.</p></div></li><li><div><b>Check budget and clone</b><p>The worker skips drafts, checks the shared daily token budget, posts a pending status, and shallow-clones the branch with a short-lived GitHub App token.</p></div></li><li><div><b>Security review</b><p>The Security Warden looks for injection, OWASP issues, vulnerable dependencies and data leaks, using read-only MCP tools scoped to the changed files.</p></div></li><li><div><b>Performance and logic review</b><p>A second specialist looks at complexity, correctness, races and off-by-ones. It runs sequentially to stay under Groq's per-minute limit.</p></div></li><li><div><b>Synthesize</b><p>A Synthesizer merges both reports into one structured review and removes overlap.</p></div></li><li><div><b>Ground or fail</b><p>If every claim references a file the panel actually read, inline suggestions and the review are posted. Otherwise it posts a failure status.</p></div></li></ol>
+  </section>
+
+  <section aria-labelledby="dec-h">
+    <div class="sec-title"><h2 id="dec-h">Design<br>decisions</h2><p>The choices that shaped the system, and why.</p></div>
+    <div class="decisions"><div class="decision"><span class="why">Quality</span><h3>Specialists over one prompt</h3><p>Each agent has a narrow scope and its own tools, so findings are sharper and the Synthesizer can route them into the right section.</p></div><div class="decision"><span class="why">Trust</span><h3>Fail closed</h3><p>A review that mentions a file nobody opened is treated as a hallucination. The PR gets a failure status, never a degraded review.</p></div><div class="decision"><span class="why">Security</span><h3>Sandboxed test runs</h3><p>The MCP server that runs the PR's tests uses a stripped environment and dropped privileges, so a malicious PR can't leak secrets through its test output into the model's context.</p></div><div class="decision"><span class="why">Cost</span><h3>Crash-safe and budget-aware</h3><p>Every agent step is checkpointed to Redis through LangGraph, so a crashed worker resumes instead of re-spending tokens. A daily budget gate skips new reviews with a neutral status when quota runs low.</p></div></div>
+  </section>
+
+  <section class="split" aria-labelledby="res-h">
+    <h2 id="res-h">Results</h2>
+    <div>
+      <div class="table-wrap"><table class="res"><thead><tr><th>Category</th><th>Recall</th><th>Precision</th><th>F2</th></tr></thead><tbody><tr><td>Security</td><td class="n">5/5 (100%)</td><td class="n">1.000</td><td class="n">1.000</td></tr><tr><td>Performance</td><td class="n">5/5 (100%)</td><td class="n">1.000</td><td class="n">1.000</td></tr><tr><td>Structural</td><td class="n">4/5 (80%)</td><td class="n">1.000</td><td class="n">0.833</td></tr><tr class="total"><td>Overall</td><td class="n">14/15 (93.3%)</td><td class="n">1.000</td><td class="n">0.946</td></tr></tbody></table></div>
+      <p class="fine">Measured on a 15-fixture golden dataset of deliberately injected bugs (SQL injection, race conditions, off-by-one errors and more), graded by an independent LLM judge (Gemini). The harness is in <code>evaluation/</code>.</p>
+    </div>
+  </section>
+
+  <section class="split" aria-labelledby="extra-h">
+    <h2 id="extra-h">Deployment</h2>
+    <div class="prose"><p>Runs with Docker Compose on an Oracle Cloud Always Free VM behind Caddy for automatic HTTPS. GitHub Actions redeploys over SSH on every push. The test suite is fully mocked and makes no live Redis, Groq or GitHub calls, with a separate opt-in integration suite.</p></div>
+  </section>
+
+  <section aria-label="More projects">
+    <div class="pager">
+      <a href="reachfix.html"><span>← Previous project</span><b>reachfix</b></a>
+      <a class="next" href="clauseiq.html"><span>Next project →</span><b>ClauseIQ</b></a>
+    </div>
+  </section>
+
+  <section id="contact" aria-labelledby="contact-h" style="border-top:0">
+    <div class="contact">
+      <h2 id="contact-h">Hiring for backend or applied AI?</h2>
+      <p>I'm looking for software engineering roles. Email is the fastest way to reach me.</p>
+      <div class="mailrow">
+        <span class="mail" id="email">jeelprajapati2006@gmail.com</span>
+        <button class="copy" id="copy-email" type="button">Copy</button>
+      </div>
+      <a href="https://github.com/JeelPrajapati23">github.com/JeelPrajapati23 ↗</a>
+    </div>
+  </section>
+
+  <footer><span>© 2026 Jeel Prajapati</span><a href="https://github.com/JeelPrajapati23">GitHub</a></footer>
+</div>
+<script src="../assets/main.js"></script>
+</body>
+</html>
