@@ -10,7 +10,7 @@ FONTS = """<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">"""
 
 
-def head(title, desc, root):
+def head(title, desc, root, current=None):
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -30,32 +30,41 @@ def head(title, desc, root):
   <nav aria-label="Primary">
     <a class="mark" href="{root}index.html">jeel.</a>
     <ul>
-      <li><a href="{root}index.html#projects" aria-current="page">Projects</a></li>
+      <li><a href="{root}index.html#projects"{' aria-current="page"' if current == "projects" else ""}>Projects</a></li>
       <li><a href="{root}index.html#approach">Approach</a></li>
+      <li><a href="{root}about.html"{' aria-current="page"' if current == "about" else ""}>About</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 """
 
 
-CONTACT = """
+CONTACT_T = """
   <section id="contact" aria-labelledby="contact-h" style="border-top:0">
     <div class="contact">
       <h2 id="contact-h">Hiring for backend or applied AI?</h2>
-      <p>I'm looking for software engineering roles. Email is the fastest way to reach me.</p>
+      <p>I'm looking for AI/ML, GenAI, agentic, backend, full-stack and Python roles. Email is the fastest way to reach me.</p>
       <div class="mailrow">
         <span class="mail" id="email">jeelprajapati2006@gmail.com</span>
         <button class="copy" id="copy-email" type="button">Copy</button>
       </div>
-      <a href="https://github.com/JeelPrajapati23">github.com/JeelPrajapati23 ↗</a>
+      <div class="actions" style="margin-top:0">
+        <a href="https://www.linkedin.com/in/jeel-prajapati-592411321/">LinkedIn ↗</a>
+        <a href="https://github.com/JeelPrajapati23">GitHub ↗</a>
+        <a href="{root}assets/Jeel_Prajapati_Resume.pdf">Résumé (PDF) ↗</a>
+      </div>
     </div>
   </section>
 """
 
 
+def contact(root):
+    return CONTACT_T.replace("{root}", root)
+
+
 def foot(root):
     return f"""
-  <footer><span>© 2026 Jeel Prajapati</span><a href="https://github.com/JeelPrajapati23">GitHub</a></footer>
+  <footer><span>© 2026 Jeel Prajapati · Ahmedabad, India</span><span><a href="https://www.linkedin.com/in/jeel-prajapati-592411321/">LinkedIn</a> · <a href="https://github.com/JeelPrajapati23">GitHub</a></span></footer>
 </div>
 <script src="{root}assets/main.js"></script>
 </body>
@@ -274,8 +283,91 @@ def project_page(i):
     </div>
   </section>
 """
-    html = head(f'{p["name"]} · Jeel Prajapati', p["desc"], root) + body + CONTACT + foot(root)
+    html = head(f'{p["name"]} · Jeel Prajapati', p["desc"], root, "projects") + body + contact(root) + foot(root)
     (ROOT / "projects" / f'{p["slug"]}.html').write_text(html)
+
+
+ABOUT = """
+  <header class="about-hero">
+    <div>
+      <div class="role">About</div>
+      <h1>Hi, I'm Jeel.</h1>
+      <div class="bio">
+        <p>I'm a final-year ICT student at Dhirubhai Ambani University in Gandhinagar, and I build backend systems around large language models.</p>
+        <p>Over the past year that has meant a multi-agent reviewer that comments on GitHub pull requests, a RAG system that answers questions from legal contracts, and a GraphRAG tool that traces vulnerabilities through npm dependency trees. All three are deployed or runnable, and each one ships with its own evaluation.</p>
+        <p>The part I enjoy most comes after the demo works: building the test set, finding out where the system is wrong, and fixing it. That's how ClauseIQ's faithfulness went from 0.68 to 0.89, and how I found that reachfix's embedding model was silently cutting off long advisories.</p>
+        <p>I came to this through competitive programming. 1,400+ problems and 110+ contests taught me to care about edge cases and correctness, and that habit carries into how I design systems: measure everything, refuse when unsure, and respect the budget.</p>
+      </div>
+    </div>
+
+    <aside class="card" aria-label="Quick facts">
+      <dl>
+        <div class="kv"><dt>Based in</dt><dd>Ahmedabad, Gujarat, India</dd></div>
+        <div class="kv"><dt>Studying</dt><dd>B.Tech in ICT, Dhirubhai Ambani University · graduating May 2027</dd></div>
+        <div class="kv"><dt>Looking for</dt><dd>Roles as
+          <div class="roles"><span>AI/ML Engineer</span><span>GenAI Engineer</span><span>Agentic Engineer</span><span>Backend</span><span>Full-stack</span><span>Python Developer</span></div></dd></div>
+        <div class="kv"><dt>Email</dt><dd class="mono" style="font-weight:500;word-break:break-all">jeelprajapati2006@gmail.com</dd></div>
+      </dl>
+      <div class="btns">
+        <a class="btn solid" href="assets/Jeel_Prajapati_Resume.pdf">Résumé (PDF) ↓</a>
+        <a class="btn" href="https://www.linkedin.com/in/jeel-prajapati-592411321/">LinkedIn ↗</a>
+        <a class="btn" href="https://github.com/JeelPrajapati23">GitHub ↗</a>
+      </div>
+    </aside>
+  </header>
+
+  <section aria-labelledby="ach-h">
+    <div class="sec-title"><h2 id="ach-h">Competitive<br>programming</h2><p>Where I learned to care about edge cases.</p></div>
+    <div class="stats3">
+      <div><b>1903</b><span>peak LeetCode contest rating. Knight badge, top 5% of users</span></div>
+      <div><b>1,400+</b><span>problems solved across 110+ contests on LeetCode, Codeforces, CodeChef and GeeksforGeeks</span></div>
+      <div><b>#153</b><span>in the ACPC merit list for engineering admissions in Gujarat, with 99.64 percentile in GUJCET</span></div>
+    </div>
+  </section>
+
+  <section class="split" aria-labelledby="edu-h">
+    <h2 id="edu-h">Education</h2>
+    <ol class="timeline">
+      <li><span class="when">Nov 2023 – May 2027</span><div><h3>Dhirubhai Ambani University, Gandhinagar</h3><p>B.Tech in Information and Communication Technology</p></div></li>
+      <li><span class="when">2022 – 2023</span><div><h3>Mangaldeep Vidhyalaya, Ahmedabad</h3><p>Higher Secondary (Class XII), GSEB · 81.69%</p></div></li>
+      <li><span class="when">2020 – 2021</span><div><h3>Swastik School, Ahmedabad</h3><p>Secondary (Class X), GSEB · 93.33%</p></div></li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="skills-h">
+    <div class="sec-title"><h2 id="skills-h">Skills</h2><p>What I've used to build and ship the projects on this site.</p></div>
+    <div class="skills">
+      <div class="skill"><h3>Languages</h3><div class="chips"><span>Python</span><span>C++</span><span>SQL</span></div></div>
+      <div class="skill"><h3>AI &amp; LLM systems</h3><div class="chips"><span>LangGraph</span><span>LangChain</span><span>MCP</span><span>RAG</span><span>GraphRAG</span><span>Ragas</span><span>LLM-as-a-judge</span><span>Hugging Face</span><span>Knowledge graphs</span></div></div>
+      <div class="skill"><h3>Backend &amp; frontend</h3><div class="chips"><span>FastAPI</span><span>Django</span><span>Celery</span><span>React</span><span>NetworkX</span></div></div>
+      <div class="skill"><h3>Databases &amp; vector stores</h3><div class="chips"><span>PostgreSQL</span><span>Redis</span><span>Qdrant</span><span>SQLite</span></div></div>
+      <div class="skill"><h3>DevOps &amp; cloud</h3><div class="chips"><span>Docker</span><span>GitHub Actions</span><span>Azure Container Apps</span><span>Vercel</span><span>Render</span><span>Linux</span><span>Git</span></div></div>
+      <div class="skill"><h3>AI coding tools</h3><div class="chips"><span>Claude Code</span><span>GitHub Copilot</span></div></div>
+    </div>
+  </section>
+
+  <section class="split" aria-labelledby="course-h">
+    <h2 id="course-h">Coursework</h2>
+    <ul class="course">
+      <li>Data Structures &amp; Algorithms</li><li>Database Management Systems</li><li>Object Oriented Programming</li><li>Computer Networks</li>
+      <li>Computer Systems Programming</li><li>Software Engineering</li><li>Machine Learning</li><li>Optimization</li>
+    </ul>
+  </section>
+
+  <section class="split" aria-labelledby="lead-h">
+    <h2 id="lead-h">Beyond code</h2>
+    <ol class="timeline">
+      <li><span class="when">Feb 2025</span><div><h3>Event Coordinator, Raaga and Rhapsody</h3><p>Synapse cultural fest, DAU. Planned and ran one of the fest's main music events, coordinating artists, technical staff and volunteers for 300+ attendees.</p></div></li>
+    </ol>
+  </section>
+"""
+
+
+def about_page():
+    html = head("About · Jeel Prajapati",
+                "Jeel Prajapati is a final-year ICT student in Ahmedabad building LLM and backend systems, open to AI/ML, GenAI and backend roles.",
+                "", "about") + ABOUT + contact("") + foot("")
+    (ROOT / "about.html").write_text(html)
 
 
 def not_found():
@@ -294,5 +386,6 @@ def not_found():
 if __name__ == "__main__":
     for i in range(len(PROJECTS)):
         project_page(i)
+    about_page()
     not_found()
-    print("built", len(PROJECTS), "project pages + 404")
+    print("built", len(PROJECTS), "project pages + about + 404")

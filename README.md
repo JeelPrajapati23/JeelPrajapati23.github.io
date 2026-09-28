@@ -6,6 +6,7 @@ Plain HTML, CSS and a little JavaScript. No framework and no build step needed t
 
 ```
 index.html              home page
+about.html              about page (generated)
 projects/*.html         one page per project (generated)
 404.html                not-found page (generated)
 assets/styles.css       all styles, light and dark

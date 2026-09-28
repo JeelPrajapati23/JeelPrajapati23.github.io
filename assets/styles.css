@@ -262,3 +262,45 @@
   pre.example .p { color: var(--mark); }
   pre.example .r { color: var(--stop-t); }
   pre.example .g { color: var(--go-t); }
+
+  /* ---------- about ---------- */
+  .about-hero { display: grid; grid-template-columns: 1.35fr .9fr; gap: 56px; align-items: start; padding-block: 40px 88px; }
+  .about-hero h1 { font-size: clamp(56px, 9vw, 116px); font-weight: 800; letter-spacing: -.05em; line-height: .88; margin: 8px 0 32px; }
+  .bio { display: grid; gap: 18px; font-size: 19px; line-height: 1.6; max-width: 36em; }
+  .bio p:first-child { font-size: clamp(21px, 2.2vw, 25px); line-height: 1.45; }
+  .card { background: var(--card); border: 2px solid var(--ink); border-radius: 10px; overflow: hidden; box-shadow: 10px 10px 0 var(--mark); }
+  .card dl { margin: 0; }
+  .card .kv { display: grid; gap: 4px; padding: 16px 22px; border-bottom: 1px solid var(--line); }
+  .card .kv:last-child { border-bottom: 0; }
+  .card dt { font: 500 11.5px/1 var(--mono); text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
+  .card dd { margin: 0; font-weight: 600; font-size: 16.5px; line-height: 1.4; }
+  .card dd .roles { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+  .card dd .roles span { font: 500 12.5px/1 var(--mono); padding: 6px 8px; border-radius: 3px; background: var(--mark); color: var(--on-mark); }
+  .card .btns { display: flex; flex-wrap: wrap; gap: 10px; padding: 18px 22px; background: var(--bg); border-top: 2px solid var(--ink); }
+  .card .btns .btn { padding: 11px 14px; font-size: 14px; }
+
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; }
+  .timeline li { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding-block: 22px; border-top: 1px solid var(--line); }
+  .timeline li:first-child { border-top: 0; padding-top: 0; }
+  .timeline .when { font: 500 14px/1.5 var(--mono); color: var(--muted); }
+  .timeline h3 { font-size: 24px; font-weight: 800; letter-spacing: -.02em; line-height: 1.15; }
+  .timeline p { color: var(--muted); margin-top: 4px; }
+
+  .skills { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .skill { background: var(--card); border: 2px solid var(--ink); border-radius: 10px; padding: 22px; display: grid; gap: 12px; align-content: start; }
+  .skill h3 { font-size: 20px; font-weight: 800; letter-spacing: -.02em; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips span { font: 500 13px/1 var(--mono); padding: 8px 10px; border: 1px solid var(--line); border-radius: 3px; background: var(--bg); }
+
+  .course { columns: 2; column-gap: 32px; list-style: none; margin: 0; padding: 0; font-size: 17px; }
+  .course li { padding-block: 10px; border-bottom: 1px solid var(--line); break-inside: avoid; }
+
+  @media (max-width: 960px) {
+    .about-hero { grid-template-columns: 1fr; gap: 40px; }
+    .skills { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .timeline li { grid-template-columns: 1fr; gap: 6px; }
+    .course { columns: 1; }
+    .card { box-shadow: 6px 6px 0 var(--mark); }
+  }
