@@ -19,6 +19,7 @@ build.py                regenerates projects/*.html and 404.html
 
 - **Home page:** edit `index.html` directly.
 - **Project pages:** edit the `PROJECTS` list in `build.py`, then run `python3 build.py`.
+- **Always run `python3 build.py` before pushing.** It also stamps every page with a version tag for the CSS and JS, so browsers never keep a stale copy.
 - **Preview locally:** `python3 -m http.server` and open http://localhost:8000.
 
 Pushing to `main` publishes the site.

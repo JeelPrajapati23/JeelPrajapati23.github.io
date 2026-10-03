@@ -2,9 +2,15 @@
 
 Run `python3 build.py` after editing page content below. index.html is edited by hand.
 """
+import hashlib
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).parent
+# Cache-busting tag: changes whenever the stylesheet or script changes, so browsers never mix old and new files.
+VERSION = hashlib.sha1(
+    (ROOT / "assets/styles.css").read_bytes() + (ROOT / "assets/main.js").read_bytes()
+).hexdigest()[:8]
 FONTS = """<link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">"""
@@ -23,7 +29,7 @@ def head(title, desc, root, current=None):
 <meta property="og:type" content="website">
 <link rel="icon" href="{root}assets/favicon.svg" type="image/svg+xml">
 {FONTS}
-<link rel="stylesheet" href="{root}assets/styles.css">
+<link rel="stylesheet" href="{root}assets/styles.css?v={VERSION}">
 </head>
 <body>
 <div class="wrap">
@@ -66,7 +72,7 @@ def foot(root):
     return f"""
   <footer><span>© 2026 Jeel Prajapati · Ahmedabad, India</span><span><a href="https://www.linkedin.com/in/jeel-prajapati-592411321/">LinkedIn</a> · <a href="https://github.com/JeelPrajapati23">GitHub</a></span></footer>
 </div>
-<script src="{root}assets/main.js"></script>
+<script src="{root}assets/main.js?v={VERSION}"></script>
 </body>
 </html>
 """
@@ -260,11 +266,11 @@ def project_page(i):
               <source src="{root}assets/video/{p["slug"]}.mp4" type="video/mp4">
               Your browser can't play this video. <a href="{root}assets/video/{p["slug"]}.mp4">Download it instead</a>.
             </video>
-            <button class="mini-play" type="button" hidden aria-label="Play the {p["name"]} demo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+            <button class="mini-play" type="button" hidden aria-label="Play the {p["name"]} demo"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
           </div>
           <div class="mini-bar">
             <span><b>Demo</b> · {p["video"]}</span>
-            <button class="mini-fs" type="button" aria-label="Watch the {p["name"]} demo in full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Full screen</button>
+            <button class="mini-fs" type="button" aria-label="Watch the {p["name"]} demo in full screen"><svg viewBox="0 0 24 24" width="13" height="13" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Full screen</button>
           </div>
         </div>
       <p class="fine">A {p["video"]} walkthrough with voiceover.</p>
@@ -406,7 +412,15 @@ def not_found():
     (ROOT / "404.html").write_text(html)
 
 
+def stamp_index():
+    p = ROOT / "index.html"
+    html = p.read_text()
+    html = re.sub(r'assets/(styles\.css|main\.js)(\?v=[0-9a-f]+)?"', lambda m: f'assets/{m.group(1)}?v={VERSION}"', html)
+    p.write_text(html)
+
+
 if __name__ == "__main__":
+    stamp_index()
     for i in range(len(PROJECTS)):
         project_page(i)
     about_page()
