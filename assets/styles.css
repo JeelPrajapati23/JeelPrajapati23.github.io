@@ -306,10 +306,21 @@
   }
 
   /* ---------- demo videos ---------- */
-  .demo { margin: 0; display: grid; gap: 10px; }
-  .demo video { display: block; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; background: #0B0B0A; border: 2px solid var(--ink); border-radius: 6px; }
-  .demo figcaption { font: 500 12px/1.3 var(--mono); color: var(--muted); letter-spacing: .03em; }
-  .p-demo { border-top: 1px solid var(--line); }
-  .p-demo .demo { max-width: 1000px; }
-  .p-demo .demo video { border-radius: 10px; box-shadow: 12px 12px 0 var(--mark); }
-  @media (max-width: 560px) { .p-demo .demo video { box-shadow: 6px 6px 0 var(--mark); } }
+  .vwin { margin-top: 28px; max-width: 460px; background: var(--term); border: 2px solid var(--ink); border-radius: 10px; overflow: hidden; box-shadow: 6px 6px 0 var(--mark); }
+  .vbar { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-bottom: 1px solid #2A2A27; font: 500 11.5px/1 var(--mono); color: var(--term-dim); }
+  .vbar .vname { color: var(--term-ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .vbar .dots i { width: 9px; height: 9px; }
+  .vbody { position: relative; }
+  .vbody video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #0B0B0A; }
+  .vplay {
+    position: absolute; left: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 13px; border: 2px solid var(--on-mark); border-radius: 4px; cursor: pointer;
+    background: var(--mark); color: var(--on-mark); font: 700 13px/1 var(--body);
+    box-shadow: 3px 3px 0 var(--on-mark); transition: transform .15s, box-shadow .15s;
+  }
+  .vplay span { font-size: 11px; }
+  .vplay:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--on-mark); }
+  .vplay:focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; }
+  .p-demo .vwin { margin-top: 0; max-width: 640px; }
+  .p-demo .fine { margin-top: 18px; }
+  @media (max-width: 560px) { .vwin { box-shadow: 4px 4px 0 var(--mark); } }

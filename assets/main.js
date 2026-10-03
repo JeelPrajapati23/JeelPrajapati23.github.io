@@ -97,3 +97,16 @@
     };
     try { navigator.clipboard.writeText(el.textContent).then(done, fallback); } catch (e) { fallback(); }
   });
+
+  // Demo videos: show a compact play button over the poster; native controls appear once playing.
+  document.querySelectorAll('.vwin').forEach(function (win) {
+    var v = win.querySelector('video'), btn = win.querySelector('.vplay');
+    if (!v || !btn) return;
+    v.controls = false; btn.hidden = false;
+    btn.addEventListener('click', function () {
+      btn.hidden = true; v.controls = true;
+      var p = v.play(); if (p && p.catch) p.catch(function () {});
+    });
+    v.addEventListener('play', function () { btn.hidden = true; v.controls = true; });
+    v.addEventListener('ended', function () { v.controls = false; btn.hidden = false; });
+  });

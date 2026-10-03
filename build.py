@@ -251,14 +251,21 @@ def project_page(i):
     <div class="stats3">{stats}</div>
   </header>
 
-  <section class="p-demo" aria-labelledby="demo-h">
-    <div class="sec-title"><h2 id="demo-h">Watch the<br>demo</h2><p>A {p["video"]} walkthrough of {p["name"]} and how it works, with voiceover.</p></div>
-    <figure class="demo">
-      <video controls preload="metadata" playsinline poster="{root}assets/video/{p["slug"]}-poster.jpg" aria-label="{p["name"]} demo video">
-        <source src="{root}assets/video/{p["slug"]}.mp4" type="video/mp4">
-        Your browser can't play this video. <a href="{root}assets/video/{p["slug"]}.mp4">Download it instead</a>.
-      </video>
-    </figure>
+  <section class="split p-demo" aria-labelledby="demo-h">
+    <h2 id="demo-h">Demo</h2>
+    <div>
+      <div class="vwin">
+          <div class="vbar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="vname">{p["slug"]} · demo</span><span class="vdur">{p["video"]}</span></div>
+          <div class="vbody">
+            <video controls preload="metadata" playsinline poster="{root}assets/video/{p["slug"]}-poster.jpg" aria-label="{p["name"]} demo video">
+              <source src="{root}assets/video/{p["slug"]}.mp4" type="video/mp4">
+              Your browser can't play this video. <a href="{root}assets/video/{p["slug"]}.mp4">Download it instead</a>.
+            </video>
+            <button class="vplay" type="button" hidden aria-label="Play the {p["name"]} demo, {p["video"]}, with sound"><span aria-hidden="true">▶</span>Watch demo</button>
+          </div>
+        </div>
+      <p class="fine">A {p["video"]} walkthrough with voiceover.</p>
+    </div>
   </section>
 
   <section class="split" aria-labelledby="why-h">
