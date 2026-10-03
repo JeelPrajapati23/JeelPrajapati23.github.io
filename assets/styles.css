@@ -305,22 +305,27 @@
     .card { box-shadow: 6px 6px 0 var(--mark); }
   }
 
-  /* ---------- demo videos ---------- */
-  .vwin { margin-top: 28px; max-width: 460px; background: var(--term); border: 2px solid var(--ink); border-radius: 10px; overflow: hidden; box-shadow: 6px 6px 0 var(--mark); }
-  .vbar { display: flex; align-items: center; gap: 12px; padding: 8px 12px; border-bottom: 1px solid #2A2A27; font: 500 11.5px/1 var(--mono); color: var(--term-dim); }
-  .vbar .vname { color: var(--term-ink); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .vbar .dots i { width: 9px; height: 9px; }
-  .vbody { position: relative; }
-  .vbody video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #0B0B0A; }
-  .vplay {
-    position: absolute; left: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 8px;
-    padding: 9px 13px; border: 2px solid var(--on-mark); border-radius: 4px; cursor: pointer;
-    background: var(--mark); color: var(--on-mark); font: 700 13px/1 var(--body);
-    box-shadow: 3px 3px 0 var(--on-mark); transition: transform .15s, box-shadow .15s;
+  /* ---------- demo videos: mini-player card ---------- */
+  .mini { margin-top: 28px; width: 100%; max-width: 320px; background: var(--card); border: 2px solid var(--ink); border-radius: 10px; overflow: hidden; }
+  .mini-screen { position: relative; background: #0B0B0A; }
+  .mini-screen video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; background: #0B0B0A; }
+  .mini-play {
+    position: absolute; inset: 0; margin: auto; width: 52px; height: 52px; border-radius: 50%;
+    display: grid; place-items: center; cursor: pointer; padding: 0;
+    background: var(--mark); color: var(--on-mark); border: 2px solid var(--on-mark);
+    transition: transform .15s;
   }
-  .vplay span { font-size: 11px; }
-  .vplay:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--on-mark); }
-  .vplay:focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; }
-  .p-demo .vwin { margin-top: 0; max-width: 640px; }
-  .p-demo .fine { margin-top: 18px; }
-  @media (max-width: 560px) { .vwin { box-shadow: 4px 4px 0 var(--mark); } }
+  .mini-play svg { width: 22px; height: 22px; fill: currentColor; margin-left: 3px; }
+  .mini-play:hover { transform: scale(1.08); }
+  .mini-play:focus-visible, .mini-fs:focus-visible { outline: 2px solid var(--mark); outline-offset: 3px; }
+  .mini-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px 8px 12px; border-top: 2px solid var(--ink); font: 500 12px/1 var(--mono); color: var(--muted); }
+  .mini-bar b { color: var(--ink); font-weight: 700; }
+  .mini-fs {
+    display: inline-flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 8px; border-radius: 4px;
+    font: 600 12px/1 var(--body); color: var(--ink); background: var(--bg); border: 1px solid var(--line);
+  }
+  .mini-fs:hover { border-color: var(--ink); }
+  .mini-fs svg { width: 13px; height: 13px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .project .info, .split > div { min-width: 0; }
+  .p-demo .mini { margin-top: 0; max-width: 360px; }
+  .p-demo .fine { margin-top: 14px; }

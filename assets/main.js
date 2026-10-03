@@ -98,15 +98,20 @@
     try { navigator.clipboard.writeText(el.textContent).then(done, fallback); } catch (e) { fallback(); }
   });
 
-  // Demo videos: show a compact play button over the poster; native controls appear once playing.
-  document.querySelectorAll('.vwin').forEach(function (win) {
-    var v = win.querySelector('video'), btn = win.querySelector('.vplay');
-    if (!v || !btn) return;
-    v.controls = false; btn.hidden = false;
-    btn.addEventListener('click', function () {
-      btn.hidden = true; v.controls = true;
-      var p = v.play(); if (p && p.catch) p.catch(function () {});
+  // Demo videos: small inline mini-player with a full-screen option.
+  document.querySelectorAll('.mini').forEach(function (card) {
+    var v = card.querySelector('video'), play = card.querySelector('.mini-play'), fs = card.querySelector('.mini-fs');
+    if (!v) return;
+    var start = function () { var p = v.play(); if (p && p.catch) p.catch(function () {}); };
+    v.controls = false; play.hidden = false;
+    play.addEventListener('click', function () { v.controls = true; play.hidden = true; start(); });
+    v.addEventListener('play', function () { v.controls = true; play.hidden = true; });
+    v.addEventListener('ended', function () { v.controls = false; play.hidden = false; });
+    fs.addEventListener('click', function () {
+      v.controls = true; play.hidden = true;
+      if (v.requestFullscreen) { v.requestFullscreen().catch(function () {}); }
+      else if (v.webkitRequestFullscreen) { v.webkitRequestFullscreen(); }
+      else if (v.webkitEnterFullscreen) { v.webkitEnterFullscreen(); }
+      start();
     });
-    v.addEventListener('play', function () { btn.hidden = true; v.controls = true; });
-    v.addEventListener('ended', function () { v.controls = false; btn.hidden = false; });
   });

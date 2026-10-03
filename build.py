@@ -254,14 +254,17 @@ def project_page(i):
   <section class="split p-demo" aria-labelledby="demo-h">
     <h2 id="demo-h">Demo</h2>
     <div>
-      <div class="vwin">
-          <div class="vbar"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="vname">{p["slug"]} · demo</span><span class="vdur">{p["video"]}</span></div>
-          <div class="vbody">
+      <div class="mini">
+          <div class="mini-screen">
             <video controls preload="metadata" playsinline poster="{root}assets/video/{p["slug"]}-poster.jpg" aria-label="{p["name"]} demo video">
               <source src="{root}assets/video/{p["slug"]}.mp4" type="video/mp4">
               Your browser can't play this video. <a href="{root}assets/video/{p["slug"]}.mp4">Download it instead</a>.
             </video>
-            <button class="vplay" type="button" hidden aria-label="Play the {p["name"]} demo, {p["video"]}, with sound"><span aria-hidden="true">▶</span>Watch demo</button>
+            <button class="mini-play" type="button" hidden aria-label="Play the {p["name"]} demo"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg></button>
+          </div>
+          <div class="mini-bar">
+            <span><b>Demo</b> · {p["video"]}</span>
+            <button class="mini-fs" type="button" aria-label="Watch the {p["name"]} demo in full screen"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Full screen</button>
           </div>
         </div>
       <p class="fine">A {p["video"]} walkthrough with voiceover.</p>
