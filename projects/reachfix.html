@@ -36,6 +36,16 @@
     <div class="stats3"><div><b>556/556</b><span>version matches agree with OSV's own matching</span></div><div><b>20/20</b><span>uploaded lockfile scans identical to the graph</span></div><div><b>24/24</b><span>answers cite the graph facts and advisories they use</span></div></div>
   </header>
 
+  <section class="p-demo" aria-labelledby="demo-h">
+    <div class="sec-title"><h2 id="demo-h">Watch the<br>demo</h2><p>A 0:58 walkthrough of reachfix and how it works, with voiceover.</p></div>
+    <figure class="demo">
+      <video controls preload="metadata" playsinline poster="../assets/video/reachfix-poster.jpg" aria-label="reachfix demo video">
+        <source src="../assets/video/reachfix.mp4" type="video/mp4">
+        Your browser can't play this video. <a href="../assets/video/reachfix.mp4">Download it instead</a>.
+      </video>
+    </figure>
+  </section>
+
   <section class="split" aria-labelledby="why-h">
     <h2 id="why-h">The problem</h2>
     <div class="prose"><p>"Is my project affected by this CVE?" sounds like a search question, but it isn't. The vulnerable package is usually several hops down the dependency tree, and the obvious fix often breaks a version range some other package declares.</p><p>Similarity search over advisory text can't follow those chains. reachfix combines a dependency graph with semantic search, and keeps the LLM on two narrow, checkable jobs.</p></div>

@@ -75,6 +75,7 @@ def foot(root):
 PROJECTS = [
     {
         "slug": "pr-review-agent",
+        "video": "0:42",
         "name": "PR Review Agent",
         "desc": "A multi-agent GitHub App that reviews pull requests and posts one-click fixes. 14 of 15 injected bugs caught with zero false positives.",
         "kicker": "LLM agents · GitHub App",
@@ -117,6 +118,7 @@ PROJECTS = [
     },
     {
         "slug": "clauseiq",
+        "video": "0:37",
         "name": "ClauseIQ",
         "desc": "Multi-tenant RAG for legal contracts with claim-level answer verification. 0.89 faithfulness on 68 CUAD questions.",
         "kicker": "Retrieval-augmented generation · Legal",
@@ -159,6 +161,7 @@ PROJECTS = [
     },
     {
         "slug": "reachfix",
+        "video": "0:58",
         "name": "reachfix",
         "desc": "A dependency and vulnerability knowledge graph that finds how a CVE reaches your project and the smallest upgrade that fixes it.",
         "kicker": "Supply-chain security · Knowledge graph",
@@ -247,6 +250,16 @@ def project_page(i):
     <div class="stack" style="margin-top:0">{stack}</div>
     <div class="stats3">{stats}</div>
   </header>
+
+  <section class="p-demo" aria-labelledby="demo-h">
+    <div class="sec-title"><h2 id="demo-h">Watch the<br>demo</h2><p>A {p["video"]} walkthrough of {p["name"]} and how it works, with voiceover.</p></div>
+    <figure class="demo">
+      <video controls preload="metadata" playsinline poster="{root}assets/video/{p["slug"]}-poster.jpg" aria-label="{p["name"]} demo video">
+        <source src="{root}assets/video/{p["slug"]}.mp4" type="video/mp4">
+        Your browser can't play this video. <a href="{root}assets/video/{p["slug"]}.mp4">Download it instead</a>.
+      </video>
+    </figure>
+  </section>
 
   <section class="split" aria-labelledby="why-h">
     <h2 id="why-h">The problem</h2>

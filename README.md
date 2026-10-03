@@ -11,6 +11,7 @@ projects/*.html         one page per project (generated)
 404.html                not-found page (generated)
 assets/styles.css       all styles, light and dark
 assets/main.js          terminal tabs and copy-email button
+assets/video/           demo video and poster image per project
 build.py                regenerates projects/*.html and 404.html
 ```
 

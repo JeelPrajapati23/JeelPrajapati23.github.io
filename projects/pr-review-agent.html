@@ -36,6 +36,16 @@
     <div class="stats3"><div><b>14/15</b><span>injected bugs caught across security, performance and structure</span></div><div><b>0</b><span>false positives across all 15 test cases</span></div><div><b>0.946</b><span>F2 score, weighting recall 4× over precision</span></div></div>
   </header>
 
+  <section class="p-demo" aria-labelledby="demo-h">
+    <div class="sec-title"><h2 id="demo-h">Watch the<br>demo</h2><p>A 0:42 walkthrough of PR Review Agent and how it works, with voiceover.</p></div>
+    <figure class="demo">
+      <video controls preload="metadata" playsinline poster="../assets/video/pr-review-agent-poster.jpg" aria-label="PR Review Agent demo video">
+        <source src="../assets/video/pr-review-agent.mp4" type="video/mp4">
+        Your browser can't play this video. <a href="../assets/video/pr-review-agent.mp4">Download it instead</a>.
+      </video>
+    </figure>
+  </section>
+
   <section class="split" aria-labelledby="why-h">
     <h2 id="why-h">The problem</h2>
     <div class="prose"><p>A single generic prompt makes a poor code reviewer. It either misses real bugs or buries them in vague advice. I wanted reviews that are specific and actionable, and cheap enough to run on Groq's free tier.</p><p>There's a harder problem underneath. A reviewer that can verify its claims has to run the PR's tests, which means executing code written by whoever opened the PR. So the system is built around two real risks: running out of API budget, and running untrusted code.</p></div>
